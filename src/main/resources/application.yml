@@ -1,0 +1,22 @@
+spring:
+  thymeleaf:
+    encoding: UTF-8
+  profiles:
+    active: ${ACTIVE_PROFILE:dev}
+  mvc:
+    problemdetails:
+      enabled: true
+  jpa:
+    open-in-view: true
+
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    path: /customer/error
+
+
+
+tansu:
+  openapi:
+    dev-url: http://localhost:8080
+    prod-url: http://tansu-api:8090
