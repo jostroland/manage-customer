@@ -22,10 +22,9 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @Slf4j
 public class RestExceptionHandler {
 
-    private ResponseEntity<ProblemDetail> createHttpErrorResponse(HttpStatus httpStatus, String reason, Exception exception) {
+    private ResponseEntity<ProblemDetail> createHttpErrorResponse(HttpStatus httpStatus, Exception exception) {
         log.error(exception.getMessage());
-        var problemDetail = ProblemDetail.forStatusAndDetail(httpStatus,reason);
-        problemDetail.setProperty("reason",reason);
+        var problemDetail = ProblemDetail.forStatusAndDetail(httpStatus,exception.getMessage());
         problemDetail.setDetail(exception.getMessage());
         problemDetail.setStatus(httpStatus.value());
         return new ResponseEntity<>(problemDetail, httpStatus);
@@ -33,32 +32,32 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ProblemDetail> onPostNotFoundException(EntityNotFoundException e) {
-        return createHttpErrorResponse(HttpStatus.NOT_FOUND,e.getMessage(),e);
+        return createHttpErrorResponse(HttpStatus.NOT_FOUND,e);
     }
 
     @ExceptionHandler(OperationNonPermittedException.class)
     public ResponseEntity<ProblemDetail> onOperationNonPermittedException(OperationNonPermittedException e){
-        return createHttpErrorResponse(HttpStatus.NOT_ACCEPTABLE,e.getMessage(),e);
+        return createHttpErrorResponse(HttpStatus.NOT_ACCEPTABLE,e);
     }
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ProblemDetail> illegalStateException(IllegalStateException exception) {
-        return createHttpErrorResponse(BAD_REQUEST, exception.getMessage(), exception);
+        return createHttpErrorResponse(BAD_REQUEST, exception);
     }
 
     @ExceptionHandler(NoResultException.class)
     public ResponseEntity<ProblemDetail> noResultException(NoResultException exception) {
-        return createHttpErrorResponse(INTERNAL_SERVER_ERROR, exception.getMessage(), exception);
+        return createHttpErrorResponse(INTERNAL_SERVER_ERROR, exception);
     }
 
     @ExceptionHandler(ServletException.class)
     public ResponseEntity<ProblemDetail> servletException(ServletException exception) {
-        return createHttpErrorResponse(INTERNAL_SERVER_ERROR, exception.getMessage(), exception);
+        return createHttpErrorResponse(INTERNAL_SERVER_ERROR, exception);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> exception(Exception exception) {
-        return createHttpErrorResponse(INTERNAL_SERVER_ERROR, exception.getMessage(), exception);
+        return createHttpErrorResponse(INTERNAL_SERVER_ERROR, exception);
     }
     
 

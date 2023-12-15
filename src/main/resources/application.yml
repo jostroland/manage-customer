@@ -1,14 +1,54 @@
 spring:
-  thymeleaf:
-    encoding: UTF-8
+
+#PROFILS
   profiles:
     active: ${ACTIVE_PROFILE:dev}
+
+#DATASOURCE
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_SQL_HOST}:${POSTGRES_SQL_PORT}/${POSTGRES_SQL_DATABASE}
+    username: ${POSTGRES_SQL_USERNAME}
+    password: ${POSTGRES_SQL_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+logging:
+  level:
+    root: INFO
+
+#PROBLEM DETAILS
   mvc:
     problemdetails:
       enabled: true
-  jpa:
-    open-in-view: true
 
+#MANAGEMENT ACTUATOR
+management:
+  endpoints:
+    health:
+      show-details: always
+    web:
+      exposure:
+        include: *
+
+#SWAGGER
+tansu:
+  openapi:
+    dev-url: http://localhost:${SERVER_PORT:8080}
+    prod-url: http://tansu-api:8090
+
+#logging:
+  #config: classpath:logback-spring.xml
+
+#SERVER WEB
 server:
   port: ${SERVER_PORT:8080}
   error:
@@ -16,7 +56,5 @@ server:
 
 
 
-tansu:
-  openapi:
-    dev-url: http://localhost:8080
-    prod-url: http://tansu-api:8090
+#spring.security.user.name=saurav
+#spring.security.user.password=admin

@@ -23,10 +23,9 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public record HttpResponse<T> (String timeStamp,
                                int statusCode,
                                HttpStatus status,
-                               String reason,
                                String message,
                                String developerMessage,
-                               Collection<? extends T> customers,
+                               Collection<? extends T> data,
                                Map<String, Object> pageCustomers)
 
        implements Serializable {

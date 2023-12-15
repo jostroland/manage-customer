@@ -48,7 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
         return Observation.createNotStarted("save-Customer",registry)
                 .observe(
                         HttpResponse.<CustomerDto>builder()
-                                .customers(Collections.singleton(
+                                .data(Collections.singleton(
                                         CustomerMapper.toDto(customerSave)
                                 ))
                                 .message("Customer created successfully")
@@ -82,7 +82,7 @@ public class CustomerServiceImpl implements CustomerService {
         return Observation.createNotStarted("update-Customer",registry)
                 .observe(
                         HttpResponse.<CustomerDto>builder()
-                                .customers(Collections.singleton(
+                                .data(Collections.singleton(
                                         CustomerMapper.toDto(updateCustomer)
                                 ))
                                 .message("Customer updated successfully")
@@ -110,7 +110,7 @@ public class CustomerServiceImpl implements CustomerService {
         return Observation.createNotStarted("find-by-id-Customer",registry)
                 .observe(
                          HttpResponse.<CustomerDto>builder()
-                                .customers(Collections.singleton(
+                                .data(Collections.singleton(
                                         CustomerMapper.toDto(optionalCustomer.orElseThrow(()-> new NoSuchElementException("This Customer was not found on the server")))
                                 ))
                                 .message("Customer founded successfully")
@@ -134,7 +134,7 @@ public class CustomerServiceImpl implements CustomerService {
         return Observation.createNotStarted("find-all-Customer",registry)
                 .observe(
                         HttpResponse.<List<CustomerDto>>builder()
-                                .customers(singleton(customerDtos))
+                                .data(singleton(customerDtos))
                                 .message(customerRepository.count() > 0 ? customerRepository.count() + " notes retrieved" : "No notes to display")
                                 .status(OK)
                                 .statusCode(OK.value())
@@ -186,7 +186,7 @@ public class CustomerServiceImpl implements CustomerService {
         return Observation.createNotStarted("delete-Customer",registry)
                 .observe(
                         () -> HttpResponse.<CustomerDto>builder()
-                                .customers(Collections.singleton(
+                                .data(Collections.singleton(
                                         CustomerMapper.toDto(optionalCustomer.orElseThrow(()-> new NoSuchElementException("This Customer was not found on the server")))
                                 ))
                                 .message("Customer deleted successfully")

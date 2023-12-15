@@ -2,6 +2,8 @@ package com.tansu.testcustomer.utils;
 
 public class Constants {
     public static final String APP_ROOT = "api";
+    public static final String BASE_URI = "http://localhost:";
+    public static final String APP_SLASH = "/";
 
     public final static  String CREATE_CUSTOMER_ENDPOINT = APP_ROOT + "/customer/save";
     public static final  String UPDATE_CUSTOMER_ENDPOINT = APP_ROOT+ "/customer/update/{id}";
