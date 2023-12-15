@@ -7,7 +7,6 @@ import com.tansu.testcustomer.exception.EntityNotFoundException;
 import com.tansu.testcustomer.mapper.CustomerMapper;
 import com.tansu.testcustomer.repository.CustomerRepository;
 import com.tansu.testcustomer.validation.ObjectsValidator;
-import com.tansu.testcustomer.services.CustomerService;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import jakarta.transaction.Transactional;
@@ -15,14 +14,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.tansu.testcustomer.util.DateUtil.dateTimeFormatter;
+import static com.tansu.testcustomer.utils.DateUtil.dateTimeFormatter;
 import static java.util.Collections.singleton;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;

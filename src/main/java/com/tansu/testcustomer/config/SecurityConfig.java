@@ -1,6 +1,7 @@
 package com.tansu.testcustomer.config;
 
 
+import com.tansu.testcustomer.services.UserServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -27,7 +28,7 @@ public class SecurityConfig {
 		// UserDetails admin = User.withUsername("admin").password(encoder.encode("password")).roles("ADMIN").build();
 		// UserDetails user = User.withUsername("user").password(encoder.encode("pwd")).roles("USER").build();
 		// return new InMemoryUserDetailsManager(admin, user);
-		return new UsersService();
+		return new UserServiceImpl();
 
 	}
 

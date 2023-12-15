@@ -1,4 +1,4 @@
-package com.tansu.testcustomer.util;
+package com.tansu.testcustomer.utils;
 
 import java.time.format.DateTimeFormatter;
 

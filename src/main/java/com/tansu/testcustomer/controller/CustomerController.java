@@ -9,7 +9,9 @@ import com.tansu.testcustomer.services.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +24,10 @@ public class CustomerController implements CustomerApi {
 
     @Override
     public ResponseEntity<HttpResponse<CustomerDto>> saveCustomer(CustomerDto customerDto) {
-        return ResponseEntity.ok().body(customerService.save(customerDto));
+        return ResponseEntity.created(
+                URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/customer/all").toUriString())
+        ).body(customerService.save(customerDto));
+
     }
 
     @Override

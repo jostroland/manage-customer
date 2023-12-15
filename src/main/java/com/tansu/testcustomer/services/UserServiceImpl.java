@@ -1,26 +1,23 @@
 package com.tansu.testcustomer.services;
 
-import com.tansu.testcustomer.dto.CustomerDto;
 import com.tansu.testcustomer.dto.HttpResponse;
 import com.tansu.testcustomer.dto.UserDto;
 import com.tansu.testcustomer.dto.UserRequest;
-import com.tansu.testcustomer.entities.Customer;
 import com.tansu.testcustomer.entities.User;
 import com.tansu.testcustomer.exception.EntityNotFoundException;
-import com.tansu.testcustomer.mapper.CustomerMapper;
 import com.tansu.testcustomer.mapper.UserMapper;
 import com.tansu.testcustomer.repository.UserRepository;
 import com.tansu.testcustomer.validation.ObjectsValidator;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
@@ -28,28 +25,28 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.tansu.testcustomer.util.DateUtil.dateTimeFormatter;
+import static com.tansu.testcustomer.utils.DateUtil.dateTimeFormatter;
 import static java.util.Collections.singleton;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
 import static org.springframework.http.HttpStatus.OK;
 
 
-@Component
+
 @Service
 @Slf4j
-@RequiredArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDetailsService {
 
-    private final UserRepository repository;
-    private final PasswordEncoder encoder;
-    private final ObservationRegistry registry;
-    private final ObjectsValidator<UserDto> validator;
+
+    @Autowired private UserRepository repository;
+    @Autowired private PasswordEncoder encoder;
+    @Autowired private ObservationRegistry registry;
+    @Autowired private ObjectsValidator<UserDto> validator;
 
     @Override
     public HttpResponse<UserDto> save(UserRequest userRequest) {
-        log.info("Saving User to the database");
+        log.info("Saving user to the database");
 
         User user = User.builder()
                 .name(userRequest.name())
@@ -62,7 +59,6 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
 
         User userSave = repository.save(user);
         UserDto userDtoSave = UserMapper.toDto(userSave);
-
 
         return Observation.createNotStarted("save-user", registry)
                 .observe(
