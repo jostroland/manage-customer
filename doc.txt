@@ -2,7 +2,8 @@ spring:
 #PROFILS
   profiles:
     active: ${ACTIVE_PROFILE:dev}
-
+  config:
+    import: optional:file:.env.${ACTIVE_PROFILE:dev} #import: optional:file:.env[.properties]
 #DATASOURCE
   datasource:
     url: jdbc:postgresql://${POSTGRES_SQL_HOST}:${POSTGRES_SQL_PORT}/${POSTGRES_SQL_DATABASE}
@@ -29,6 +30,14 @@ logging:
     problemdetails:
       enabled: true
 
+#MANAGEMENT ACTUATOR
+#management:
+#  endpoints:
+#    health:
+#      show-details: always
+#    web:
+#      exposure:
+#        include:
 
 #SWAGGER
 tansu:
@@ -36,7 +45,8 @@ tansu:
     dev-url: http://localhost:${SERVER_PORT:8080}
     prod-url: http://tansu-api:8090
 
-
+#logging:
+  #config: classpath:logback-spring.xml
 
 #SERVER WEB
 server:
@@ -44,14 +54,7 @@ server:
   error:
     path: /customer/error
 
-  #MANAGEMENT ACTUATOR
-  #management:
-  #  endpoints:
-  #    health:
-  #      show-details: always
-  #    web:
-  #      exposure:
-  #        include:
 
-  #logging:
-  #config: classpath:logback-spring.xml
+
+#spring.security.user.name=saurav
+#spring.security.user.password=admin

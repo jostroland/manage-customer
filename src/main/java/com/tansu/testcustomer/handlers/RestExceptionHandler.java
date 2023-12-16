@@ -22,6 +22,8 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @Slf4j
 public class RestExceptionHandler {
 
+
+
     private ResponseEntity<ProblemDetail> createHttpErrorResponse(HttpStatus httpStatus, Exception exception) {
         log.error(exception.getMessage());
         var problemDetail = ProblemDetail.forStatusAndDetail(httpStatus,exception.getMessage());

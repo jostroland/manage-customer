@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -16,11 +17,12 @@ public class UserDetailsService implements UserDetails {
 	/**
 	 *
 	 */
+	@Serial
 	private static final long serialVersionUID = 1L;
 
-	private String username;
-	private String password;
-	private List<GrantedAuthority> authorities;
+	private final String username;
+	private final String password;
+	private final List<GrantedAuthority> authorities;
 
 	public UserDetailsService(User userInfo) {
 		this.username = userInfo.getEmail();

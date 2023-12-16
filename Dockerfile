@@ -1,7 +1,6 @@
-FROM maven:3-amazoncorretto-21
-
+FROM openjdk:21
+VOLUME /tmp
+COPY target/*.jar  app.jar
 WORKDIR /test-client
-COPY . .
-RUN mvn clean install
-
-CMD mvn spring-boot:run
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "/app.jar"] CMD ["-start"]

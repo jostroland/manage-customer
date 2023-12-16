@@ -6,14 +6,20 @@ import com.tansu.testcustomer.controller.api.CustomerApi;
 import com.tansu.testcustomer.dto.CustomerDto;
 import com.tansu.testcustomer.dto.HttpResponse;
 import com.tansu.testcustomer.services.CustomerService;
+import com.tansu.testcustomer.utils.Constants;
+import com.tansu.testcustomer.utils.DateUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequiredArgsConstructor
@@ -54,4 +60,18 @@ public class CustomerController implements CustomerApi {
     public ResponseEntity<HttpResponse<CustomerDto>> deleteCustomer(Integer id) {
         return ResponseEntity.ok().body(customerService.delete(id));
     }
+
+    @Override
+    public ResponseEntity<HttpResponse<?>> handleError(HttpServletRequest request) {
+        return new ResponseEntity<>(
+                HttpResponse.builder()
+                        .developerMessage("There is no mapping for a " + request.getMethod() + " request for this path on the server")
+                        .status(NOT_FOUND)
+                        .statusCode(NOT_FOUND.value())
+                        .timeStamp(LocalDateTime.now().format(DateUtil.dateTimeFormatter()))
+                        .build(), NOT_FOUND
+        );
+    }
+
+
 }

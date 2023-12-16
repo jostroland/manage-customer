@@ -7,7 +7,7 @@ import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
-@Constraint(validatedBy = StrongPasswordValidator.class)
+@Constraint(validatedBy = StrongNameValidator.class)
 @Target({ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

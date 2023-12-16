@@ -13,6 +13,10 @@ target/
 .springBeans
 .sts4-cache
 
+
+### MY DOC ###
+doc.txt
+
 ### IntelliJ IDEA ###
 .idea
 *.iws

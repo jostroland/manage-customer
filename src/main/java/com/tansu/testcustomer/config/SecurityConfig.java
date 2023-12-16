@@ -36,10 +36,12 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity.csrf(CsrfConfigurer::disable)
-				.authorizeHttpRequests(
-						authorizeHttpRequests -> authorizeHttpRequests.requestMatchers("/api/user").permitAll())
-				.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-						.requestMatchers("/api/customer", "/api/customer/*").authenticated())
+									.authorizeHttpRequests(
+													 authorizeHttpRequests -> authorizeHttpRequests.requestMatchers("/api/v1/user")
+															 .permitAll())
+													.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+													.requestMatchers("/api/v1/customer", "/api/v1/customer/*")
+															.authenticated())
 				.formLogin(Customizer.withDefaults()).build();
 
 	}
