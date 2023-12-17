@@ -3,14 +3,17 @@ package com.tansu.testcustomer.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class StrongNameValidator implements ConstraintValidator<StrongName, String> {
+public class StrongRoleValidator implements ConstraintValidator<StrongRole, String> {
     @Override
-    public void initialize(StrongName constraintAnnotation) {
+    public void initialize(StrongRole constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return value.matches("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!*()]).{8,}$");
+        return value.startsWith("ROLE_");
     }
+
+
+
 }

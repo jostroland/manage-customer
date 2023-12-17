@@ -6,19 +6,14 @@ import com.tansu.testcustomer.dto.HttpResponse;
 import com.tansu.testcustomer.dto.UserDto;
 import com.tansu.testcustomer.dto.UserRequest;
 import com.tansu.testcustomer.services.UserServiceImpl;
-import com.tansu.testcustomer.utils.DateUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequiredArgsConstructor

@@ -1,6 +1,7 @@
 package com.tansu.testcustomer.mapper;
 
 import com.tansu.testcustomer.dto.UserDto;
+import com.tansu.testcustomer.dto.UserRequest;
 import com.tansu.testcustomer.entities.User;
 
 public record UserMapper() {
@@ -21,5 +22,28 @@ public record UserMapper() {
                 .email(userDto.email())
                 .build();
     }
+
+
+    public static User fromRequestToEntity(UserRequest userRequest){
+        return User.builder()
+                .id(userRequest.id())
+                .name(userRequest.name())
+                .email(userRequest.email())
+                .password(userRequest.password())
+                .roles(userRequest.roles())
+                .build();
+    }
+
+
+    public static UserDto fromRequestToDto(UserRequest userRequest){
+        return UserDto.builder()
+                .id(userRequest.id())
+                .name(userRequest.name())
+                .email(userRequest.email())
+                .roles(userRequest.roles())
+                .build();
+    }
+
+
 
 }

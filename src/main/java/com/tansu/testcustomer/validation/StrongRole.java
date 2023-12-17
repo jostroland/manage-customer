@@ -7,12 +7,12 @@ import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
-@Constraint(validatedBy = StrongNameValidator.class)
+@Constraint(validatedBy = StrongRoleValidator.class)
 @Target({ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface StrongName {
-    String message() default "Doit etre compris en 4 et 16 caractères et combiné avec des lettres en majuscule, lettres en minuscule, chiffres, caratères spéciaux.";
+public @interface StrongRole {
+    String message() default "";
 
     Class<?>[] groups() default {};
 
