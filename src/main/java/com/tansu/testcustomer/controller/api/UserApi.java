@@ -80,9 +80,7 @@ public interface UserApi {
     ResponseEntity<HttpResponse<UserDto>> deleteUser(@PathVariable("id") Integer id);
 
 
-    @DeleteMapping  (value =ERROR_USER_ENDPOINT)
-    @Operation(description = "This method manage you to error")
-    ResponseEntity<HttpResponse<?>> handleError(HttpServletRequest request);
+
 
 
 }

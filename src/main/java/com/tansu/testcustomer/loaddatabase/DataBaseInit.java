@@ -3,19 +3,25 @@ package com.tansu.testcustomer.loaddatabase;
 import com.tansu.testcustomer.dto.CustomerDto;
 import com.tansu.testcustomer.mapper.CustomerMapper;
 import com.tansu.testcustomer.repository.CustomerRepository;
+import com.tansu.testcustomer.utils.Constants;
 import net.datafaker.Faker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static com.tansu.testcustomer.utils.Constants.*;
+
 
 @Component
+@Profile({DEV, TEST})
 public class DataBaseInit implements CommandLineRunner {
+
 
     private final Logger LOG = LoggerFactory.getLogger(DataBaseInit.class);
 

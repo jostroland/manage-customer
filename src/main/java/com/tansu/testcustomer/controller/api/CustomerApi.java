@@ -81,9 +81,6 @@ public interface CustomerApi {
     ResponseEntity<HttpResponse<CustomerDto>> deleteCustomer(@PathVariable("id") Integer id);
 
 
-    @DeleteMapping  (value =ERROR_CUSTOMER_ENDPOINT)
-    @Operation(description = "This method manage you to error")
-    ResponseEntity<HttpResponse<?>> handleError(HttpServletRequest request);
 
 
 }

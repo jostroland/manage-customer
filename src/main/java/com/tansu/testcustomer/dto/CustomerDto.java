@@ -1,10 +1,11 @@
 package com.tansu.testcustomer.dto;
 
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.persistence.Column;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.validation.annotation.Validated;
 
 
@@ -15,10 +16,13 @@ public record CustomerDto(
               @NotBlank(message = "The first name must not be blank")
               @NotEmpty(message = "The first name must not be empty")
               String firstName,
-              @NotBlank(message = "The first name must not be blank")
-              @NotEmpty(message = "The first name must not be empty")
+              @NotBlank(message = "The last name must not be blank")
+              @NotEmpty(message = "The last name must not be empty")
               String lastName,
-              @Size(min = 15,max = 60,message = "Age must be between 15 and 60 years old")
+
+              @NotNull(message = "Age must not be empty")
+              @Min(value=15, message = "Age must be greater than or equal to 15 years old")
+              @Max(value=60, message = "Age must be smaller than or equal to 60 years old")
               Integer age
 
 

@@ -133,7 +133,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .observe(
                         HttpResponse.<List<CustomerDto>>builder()
                                 .data(singleton(customerDtos))
-                                .message(customerRepository.count() > 0 ? customerRepository.count() + " notes retrieved" : "No notes to display")
+                                .message(customerRepository.count() > 0 ? customerRepository.count() + " customers retrieved" : "No customers to display")
                                 .status(OK)
                                 .statusCode(OK.value())
                                 .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))
@@ -160,7 +160,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .observe(
                         HttpResponse.<Map<String, Object>>builder()
                                 .pageCustomers(response)
-                                .message("Customers found successfully")
+                                .message(customerRepository.count() > 0 ? "Page (%d/%d) - %d customers retrieved".formatted(customerPage.getNumber(),customerPage.getTotalPages(),customerPage.getTotalElements()) : "No customers to display")
                                 .status(OK)
                                 .statusCode(OK.value())
                                 .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))::build
@@ -170,6 +170,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public HttpResponse<CustomerDto> delete(Integer id) throws  EntityNotFoundException{
         log.info("Deleting Customer from the database by id {}", id);
+
         if(isNull(id)){
             log.error("The ID must not be null");
             return null;
@@ -177,7 +178,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         log.info("Deleting note from the database by id {}", id);
         Optional<Customer> optionalCustomer = ofNullable(customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("This Customer was not found on the server")));
+                .orElseThrow(() -> new EntityNotFoundException("This customer was not found on the server")));
 
         optionalCustomer.ifPresent(customerRepository::delete);
 

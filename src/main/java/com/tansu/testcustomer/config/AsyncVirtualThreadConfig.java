@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 @Component
 @EnableAsync
 public class AsyncVirtualThreadConfig {
-	@Bean(TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME)
+	/*@Bean(TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME)
 	public AsyncTaskExecutor asyncTaskExecutor() {
 		return new TaskExecutorAdapter(Executors.newVirtualThreadPerTaskExecutor());
 	}
@@ -21,7 +21,7 @@ public class AsyncVirtualThreadConfig {
 	@Bean
 	public TomcatProtocolHandlerCustomizer<?> protocolHandlerVirtualThreadExecutorCustomizer() {
 		return handler -> handler.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
-	}
+	}*/
 
 
 }

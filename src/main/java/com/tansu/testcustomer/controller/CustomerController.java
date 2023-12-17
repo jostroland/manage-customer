@@ -61,17 +61,6 @@ public class CustomerController implements CustomerApi {
         return ResponseEntity.ok().body(customerService.delete(id));
     }
 
-    @Override
-    public ResponseEntity<HttpResponse<?>> handleError(HttpServletRequest request) {
-        return new ResponseEntity<>(
-                HttpResponse.builder()
-                        .developerMessage("There is no mapping for a " + request.getMethod() + " request for this path on the server")
-                        .status(NOT_FOUND)
-                        .statusCode(NOT_FOUND.value())
-                        .timeStamp(LocalDateTime.now().format(DateUtil.dateTimeFormatter()))
-                        .build(), NOT_FOUND
-        );
-    }
 
 
 }

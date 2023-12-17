@@ -1,4 +1,4 @@
-package com.tansu.testUser.controller.api;
+package com.tansu.testcustomer.controller;
 
 
 import com.tansu.testcustomer.controller.api.UserApi;
