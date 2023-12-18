@@ -59,8 +59,8 @@ class UserServiceImplTest {
      @Mock
      static ObjectsValidator<UserDto> validator;
 
-    @InjectMocks
-    static UserServiceImpl userService;
+     @InjectMocks
+     static UserServiceImpl userService;
 
 
     private final static List<UserRequest> users  = new ArrayList<>();

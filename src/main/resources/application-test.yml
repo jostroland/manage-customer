@@ -1,0 +1,8 @@
+spring:
+  #DATASOURCE
+  datasource:
+    url: jdbc:tc:postgresql:14://dev
+
+#Server
+SERVER_PORT: 8080
+ACTIVE_PROFILE: test

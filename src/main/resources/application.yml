@@ -28,13 +28,13 @@ server:
     path: /customer/error
 
   #MANAGEMENT ACTUATOR
-  #management:
-  #  endpoints:
-  #    health:
-  #      show-details: always
-  #    web:
-  #      exposure:
-  #        include:
+#management:
+#  endpoints:
+#    health:
+#      show-details: always
+#    web:
+#      exposure:
+#        include: '*'
 
   #logging:
   #config: classpath:logback-spring.xml

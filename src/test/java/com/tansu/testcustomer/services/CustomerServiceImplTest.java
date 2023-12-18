@@ -43,13 +43,6 @@ class CustomerServiceImplTest {
 
     private final static Faker faker = new Faker();
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
 
     @Test
     void should_create_with_success() {

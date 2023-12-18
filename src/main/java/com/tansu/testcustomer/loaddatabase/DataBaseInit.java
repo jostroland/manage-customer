@@ -19,7 +19,7 @@ import static com.tansu.testcustomer.utils.Constants.*;
 
 
 @Component
-@Profile({DEV, TEST})
+@Profile({PROD})
 public class DataBaseInit implements CommandLineRunner {
 
 
