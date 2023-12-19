@@ -180,7 +180,7 @@ class UserServiceUnitTest {
 
         HttpResponse<Map<String, Object>> userServiceAll = userService.findAll(1, 3);
 
-        assertNotNull(userServiceAll.pageCustomers());
+        assertNotNull(userServiceAll.pageUsers());
     }
 
 
