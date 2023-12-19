@@ -2,8 +2,10 @@ package com.tansu.testcustomer.config;
 
 
 import com.tansu.testcustomer.services.UserServiceImpl;
+import com.tansu.testcustomer.utils.Constants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -13,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.Md4PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -37,7 +40,24 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity.csrf(CsrfConfigurer::disable)
 									.authorizeHttpRequests(
-													 authorizeHttpRequests -> authorizeHttpRequests.requestMatchers("/api/v1/user")
+													 authorizeHttpRequests ->
+															 authorizeHttpRequests.requestMatchers(
+																	 "/api/v1/user",
+																		 "/auth/**",
+																		 "/api/access/**",
+																		 "/h2-console/**",
+																		 // resources for swagger to work properly
+																		 "/v2/api-docs",
+																		 "/v3/api-docs",
+																		 "/v3/api-docs/**",
+																		 "/swagger-resources",
+																		 "/swagger-resources/**",
+																		 "/configuration/ui",
+																		 "/configuration/security",
+																		 "/swagger-ui/**",
+																		 "/webjars/**",
+																		 "/swagger-ui.html"
+																	 )
 															 .permitAll())
 													.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
 													.requestMatchers("/api/v1/customer", "/api/v1/customer/*")
@@ -47,9 +67,13 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public PasswordEncoder passwordEncoder() {
+	public PasswordEncoder passwordEncoder()
+	{
 		return new BCryptPasswordEncoder();
 	}
+
+
+
 
 	@Bean
 	public AuthenticationProvider authenticationProvider() {

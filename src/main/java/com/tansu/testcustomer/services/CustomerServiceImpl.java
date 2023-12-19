@@ -12,6 +12,7 @@ import io.micrometer.observation.ObservationRegistry;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,13 +29,12 @@ import static org.springframework.http.HttpStatus.OK;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 @Transactional
 public class CustomerServiceImpl implements CustomerService {
 
-    private final ObservationRegistry registry;
-    private final CustomerRepository customerRepository;
-    private final ObjectsValidator<CustomerDto> validator;
+    @Autowired private  ObservationRegistry registry;
+    @Autowired private  CustomerRepository customerRepository;
+    @Autowired private  ObjectsValidator<CustomerDto> validator;
     @Override
     public HttpResponse<CustomerDto> save(CustomerDto dto) {
         log.info("Saving Customer to the database");

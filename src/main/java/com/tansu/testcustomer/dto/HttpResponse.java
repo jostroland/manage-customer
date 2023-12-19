@@ -26,7 +26,8 @@ public record HttpResponse<T> (String timeStamp,
                                String message,
                                String developerMessage,
                                Collection<? extends T> data,
-                               Map<String, Object> pageCustomers)
+                               Map<String, Object> pageCustomers,
+                               Map<String, Object> pageUsers)
 
        implements Serializable {
 }

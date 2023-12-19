@@ -1,54 +1,34 @@
 package com.tansu.testcustomer.services;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.tansu.testcustomer.dto.CustomerDto;
 import com.tansu.testcustomer.dto.HttpResponse;
 import com.tansu.testcustomer.dto.UserDto;
 import com.tansu.testcustomer.dto.UserRequest;
-import com.tansu.testcustomer.entities.Customer;
 import com.tansu.testcustomer.entities.User;
-import com.tansu.testcustomer.exception.EntityNotFoundException;
 import com.tansu.testcustomer.exception.ObjectValidationException;
-import com.tansu.testcustomer.mapper.CustomerMapper;
 import com.tansu.testcustomer.mapper.UserMapper;
 import com.tansu.testcustomer.repository.UserRepository;
 import com.tansu.testcustomer.validation.ObjectsValidator;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static com.tansu.testcustomer.utils.DateUtil.dateTimeFormatter;
-import static java.util.Collections.singleton;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.http.HttpStatus.OK;
 
-
-@SpringBootTest
-@ExtendWith(MockitoExtension.class)
 @Slf4j
-class UserServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class UserServiceUnitTest {
 
      @Mock
      static UserRepository userRepository;
@@ -101,9 +81,9 @@ class UserServiceImplTest {
         HttpResponse<UserDto> save = userService.save(adminUser);
         UserDto userDto = save.data().stream().findFirst().get();
 
-        Assertions.assertNotNull(save);
-        Assertions.assertEquals(userDto.name(),user.getName());
-        Assertions.assertEquals(userDto.email(),user.getEmail());
+        assertNotNull(save);
+        assertEquals(userDto.name(),user.getName());
+        assertEquals(userDto.email(),user.getEmail());
 
 
     }
@@ -123,8 +103,8 @@ class UserServiceImplTest {
                         assertThrows(ObjectValidationException.class, () -> userService.save(adminUser));
 
 
-        Assertions.assertNotNull(objectValidationException);
-        Assertions.assertEquals(objectValidationException.getViolations(),mock.getViolations());
+        assertNotNull(objectValidationException);
+        assertEquals(objectValidationException.getViolations(),mock.getViolations());
     }
 
     @Test
@@ -159,7 +139,7 @@ class UserServiceImplTest {
         NullPointerException nullPointerException =
                 assertThrows(NullPointerException.class, () -> userService.findById(Integer.MAX_VALUE));
 
-        Assertions.assertNotNull(nullPointerException);
+        assertNotNull(nullPointerException);
     }
 
     @Test
@@ -200,7 +180,7 @@ class UserServiceImplTest {
 
         HttpResponse<Map<String, Object>> userServiceAll = userService.findAll(1, 3);
 
-        Assertions.assertNotNull(userServiceAll.pageCustomers());
+        assertNotNull(userServiceAll.pageCustomers());
     }
 
 
@@ -218,8 +198,8 @@ class UserServiceImplTest {
 
         HttpResponse<UserDto> deleted = userService.delete(id);
 
-        Assertions.assertNotNull(deleted);
-        Assertions.assertEquals(deleted.message(),"User deleted successfully");
+        assertNotNull(deleted);
+        assertEquals(deleted.message(),"User deleted successfully");
 
     }
 

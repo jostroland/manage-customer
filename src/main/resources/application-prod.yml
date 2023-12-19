@@ -1,9 +1,10 @@
-#Database
-POSTGRES_SQL_USERNAME: postgres
-POSTGRES_SQL_PASSWORD: pass22#{#[
-POSTGRES_SQL_DATABASE: prod
-POSTGRES_SQL_HOST: localhost
-POSTGRES_SQL_PORT: 5432
+spring:
+  #DATASOURCE
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    generate-ddl: true
 
 
 

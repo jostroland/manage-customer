@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,6 +41,7 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
 
 
     @Autowired private UserRepository repository;
+    @Qualifier("passwordEncoder")
     @Autowired private PasswordEncoder encoder;
     @Autowired private ObservationRegistry registry;
     @Autowired private ObjectsValidator<UserDto> validator;
@@ -63,10 +65,10 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
         return Observation.createNotStarted("save-user", registry)
                 .observe(
                         HttpResponse.<UserDto>builder()
-                                .data(Collections.singleton(
+                                .data(singleton(
                                         UserMapper.toDto(userSave)
                                 ))
-                                .message("Customer created successfully")
+                                .message("User created successfully")
                                 .status(OK)
                                 .statusCode(OK.value())
                                 .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))
@@ -97,10 +99,10 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
         updateUser.setRoles(user.getRoles());
         repository.save(updateUser);
 
-        return Observation.createNotStarted("update-Customer",registry)
+        return Observation.createNotStarted("update-user",registry)
                 .observe(
                         HttpResponse.<UserDto>builder()
-                                .data(Collections.singleton(
+                                .data(singleton(
                                         UserMapper.toDto(updateUser)
                                 ))
                                 .message("User updated successfully")
@@ -128,7 +130,7 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
         return Observation.createNotStarted("find-by-id-user",registry)
                 .observe(
                         HttpResponse.<UserDto>builder()
-                                .data(Collections.singleton(
+                                .data(singleton(
                                         UserMapper.toDto(optionalUser.orElseThrow(()-> new NoSuchElementException("This user was not found on the server")))
                                 ))
                                 .message("User founded successfully")
@@ -141,7 +143,7 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
 
     @Override
     public HttpResponse<List<UserDto>> findAll() {
-        log.info("Find all customers to the database");
+        log.info("Find all users to the database");
 
         List<UserDto> userDtos = repository.findAll().stream()
                 .map(UserMapper::toDto)
@@ -179,7 +181,7 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
         return  Observation.createNotStarted("find-all-user-page",registry)
                 .observe(
                         HttpResponse.<Map<String, Object>>builder()
-                                .pageCustomers(response)
+                                .pageUsers(response)
                                 .message("Users found successfully")
                                 .status(OK)
                                 .statusCode(OK.value())
@@ -204,7 +206,7 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
         return Observation.createNotStarted("delete-user",registry)
                 .observe(
                         () -> HttpResponse.<UserDto>builder()
-                                .data(Collections.singleton(
+                                .data(singleton(
                                         UserMapper.toDto(optionalUser.orElseThrow(()-> new NoSuchElementException("This User was not found on the server")))
                                 ))
                                 .message("User deleted successfully")
