@@ -1,16 +1,11 @@
 package com.tansu.testcustomer.dto;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
-import org.hibernate.validator.constraints.Range;
-import org.springframework.validation.annotation.Validated;
 
 
 @Builder
-@Validated
 public record CustomerDto(
               Integer id,
               @NotBlank(message = "The first name must not be blank")

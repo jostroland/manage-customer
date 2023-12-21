@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -32,7 +33,7 @@ public interface CustomerApi {
             @ApiResponse(responseCode = "200", description = "Customer create"),
             @ApiResponse(responseCode = "404", description = "Customer does not exist")
     })
-    ResponseEntity<HttpResponse<CustomerDto>> saveCustomer(@Valid @RequestBody CustomerDto customerDto);
+    ResponseEntity<HttpResponse<CustomerDto>> saveCustomer(@RequestBody @Valid CustomerDto customerDto);
 
 
     @PutMapping(value = UPDATE_CUSTOMER_ENDPOINT,consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
@@ -41,7 +42,7 @@ public interface CustomerApi {
             @ApiResponse(responseCode = "200", description = "Customer has been modified"),
             @ApiResponse(responseCode = "404", description = "Customer does not exist in the database")
     })
-    ResponseEntity<HttpResponse<CustomerDto>> updateCustomer(@PathVariable("id") Integer id, @Valid  @RequestBody CustomerDto customerDto );
+    ResponseEntity<HttpResponse<CustomerDto>> updateCustomer(@PathVariable("id") Integer id,@RequestBody @Valid CustomerDto customerDto );
 
 
 

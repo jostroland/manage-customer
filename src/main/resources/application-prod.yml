@@ -1,13 +1,6 @@
 spring:
-  #DATASOURCE
   jpa:
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: true
     generate-ddl: true
-
-
-
 
 #Server
 SERVER_PORT: 8089

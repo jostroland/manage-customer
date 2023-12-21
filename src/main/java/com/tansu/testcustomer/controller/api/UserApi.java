@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "200", description = "User create"),
             @ApiResponse(responseCode = "404", description = "User does not exist")
     })
-    ResponseEntity<HttpResponse<UserDto>> saveUser(@Valid @RequestBody UserRequest userRequest);
+    ResponseEntity<HttpResponse<UserDto>> saveUser(@RequestBody @Valid UserRequest userRequest);
 
 
     @PutMapping(value = UPDATE_USER_ENDPOINT,consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
@@ -40,7 +41,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "200", description = "User has been modified"),
             @ApiResponse(responseCode = "404", description = "User does not exist in the database")
     })
-    ResponseEntity<HttpResponse<UserDto>> updateUser(@PathVariable("id") Integer id, @Valid  @RequestBody UserRequest userRequest);
+    ResponseEntity<HttpResponse<UserDto>> updateUser(@PathVariable("id") Integer id,@RequestBody @Valid UserRequest userRequest);
 
 
 

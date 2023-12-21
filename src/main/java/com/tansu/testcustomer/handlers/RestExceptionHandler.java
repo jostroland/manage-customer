@@ -10,9 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -57,25 +61,37 @@ public class RestExceptionHandler {
         return createHttpErrorResponse(INTERNAL_SERVER_ERROR, exception);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ProblemDetail> exception(Exception exception) {
-        return createHttpErrorResponse(INTERNAL_SERVER_ERROR, exception);
-    }
-    
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ProblemDetail> exception(Exception exception) {
+//        return createHttpErrorResponse(INTERNAL_SERVER_ERROR, exception);
+//    }
+
 
     @ExceptionHandler(ObjectValidationException.class)
-    public ResponseEntity<ProblemDetail> onValidationException(ObjectValidationException exception)  {
+    public ResponseEntity<ProblemDetail> onValidationException1(ObjectValidationException e)  {
         var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
 
-        problemDetail.setProperty("source", exception.getViolationSource());
-        String stringBuilderStream = exception.getViolations().stream().map(s -> {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(s);
-            return stringBuilder;
-        }).toString();
+        problemDetail.setProperty("violationSource",e.getViolationSource());
+        problemDetail.setProperty("violationsErrors",e.getViolations().stream().toString());
 
-        problemDetail.setDetail(stringBuilderStream);
-        //problemDetail.setDetail(String.join(", ", exception.getViolations()));
+        problemDetail.setDetail("Object not valid exception has occurred");
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(problemDetail);
+    }
+
+
+    
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ProblemDetail> onValidationException(MethodArgumentNotValidException exception)  {
+        var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+
+        List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
+        String fieldsMessage = fieldErrors.stream().map(FieldError::getDefaultMessage).collect(Collectors.joining(", "));
+
+        problemDetail.setProperty("fieldErrors",fieldErrors);
+        problemDetail.setDetail(fieldsMessage);
         problemDetail.setStatus(HttpStatus.BAD_REQUEST);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

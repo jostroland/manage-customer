@@ -94,9 +94,10 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
         validator.validate(userDto);
 
         User updateUser = optionalUser .orElseThrow(() -> new EntityNotFoundException("This User was not found on the server"));
-        updateUser.setName(user.getName());
-        updateUser.setEmail(user.getEmail());
-        updateUser.setRoles(user.getRoles());
+        updateUser.setName(dto.name());
+        updateUser.setEmail(dto.email());
+        updateUser.setPassword(dto.password());
+        updateUser.setRoles(dto.roles());
         repository.save(updateUser);
 
         return Observation.createNotStarted("update-user",registry)

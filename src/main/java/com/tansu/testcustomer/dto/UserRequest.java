@@ -6,10 +6,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
-import org.springframework.validation.annotation.Validated;
 
 @Builder
-@Validated
 public record UserRequest(
                           Integer id,
                           @NotBlank(message = "The name must not be blank")

@@ -1,7 +1,7 @@
 spring:
 #PROFILS
   profiles:
-    active: ${ACTIVE_PROFILE:dev}
+    active: ${ACTIVE_PROFILE:prod}
 
 logging:
   level:
