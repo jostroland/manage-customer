@@ -13,6 +13,9 @@
 //import org.junit.jupiter.api.*;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.beans.factory.annotation.Qualifier;
+//import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
+//import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+//import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 //import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 //import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 //import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
@@ -35,6 +38,7 @@
 //@Slf4j
 //@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+////@EnableAutoConfiguration(exclude = {SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class})
 //class UserApiIntergrationTest {
 //
 //    @LocalServerPort
