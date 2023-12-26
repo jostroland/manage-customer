@@ -1,7 +1,0 @@
-spring:
-  jpa:
-    generate-ddl: true
-
-#Server
-SERVER_PORT: 8089
-ACTIVE_PROFILE: prod

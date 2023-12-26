@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 public class Config {
     @Bean
-    @Profile(value = {Constants.TEST,Constants.DEV})
+    @Profile(value = {Constants.TEST})
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
                 .requestMatchers("/**");

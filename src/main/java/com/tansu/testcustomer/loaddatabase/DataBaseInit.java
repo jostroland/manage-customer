@@ -7,6 +7,7 @@ import com.tansu.testcustomer.mapper.CustomerMapper;
 import com.tansu.testcustomer.repository.CustomerRepository;
 import com.tansu.testcustomer.repository.UserRepository;
 import com.tansu.testcustomer.utils.Constants;
+import lombok.val;
 import net.datafaker.Faker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,12 +26,10 @@ import static com.tansu.testcustomer.utils.Constants.*;
 
 
 @Component
-@Profile(PROD)
+@Profile({PROD, DEV})
 public class DataBaseInit implements CommandLineRunner {
 
-
     private final Logger LOG = LoggerFactory.getLogger(DataBaseInit.class);
-
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -40,7 +39,6 @@ public class DataBaseInit implements CommandLineRunner {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
-
 
     private static boolean isRepositoryEmpty(JpaRepository repository) {
         return repository.count() <= 0;
@@ -59,13 +57,12 @@ public class DataBaseInit implements CommandLineRunner {
             LOG.info(String.format("%d  : Users loaded in the database",numberOfUsersLoaded));
         }
 
-
         LOG.info("-----------FIN INITIALISATION DE LA BASE DE DONNEE-----------");
     }
 
     private long loadCustomers(){
         var faker = new Faker();
-        List<CustomerDto> customerDtos = IntStream.rangeClosed(1, 3)
+        var customerDtos = IntStream.rangeClosed(1, 3)
                 .mapToObj(
                         value -> CustomerDto.builder()
                                 .firstName(faker.name().firstName())
@@ -81,14 +78,11 @@ public class DataBaseInit implements CommandLineRunner {
         return customerDtos.size();
     }
 
-
     private long loadUsers(){
-        User user = User.builder().name("user").email("user@gmail.com").password(passwordEncoder.encode("password")).roles("ROLE_USER").build();
-       User u = userRepository.save(user);
-       LOG.info("User : "+ u);
+        val user = User.builder().name("user").email("user@gmail.com").password(passwordEncoder.encode("password")).roles("ROLE_USER").build();
+        val u = userRepository.save(user);
+        LOG.info("User : "+ u);
         LOG.info("userRepository.count() : "+ userRepository.count());
         return userRepository.count();
     }
-
-
 }

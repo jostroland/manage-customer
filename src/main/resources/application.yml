@@ -1,40 +1,72 @@
 spring:
-#PROFILS
-  profiles:
-    active: ${ACTIVE_PROFILE:prod}
 
+  profiles: #PROFILS
+    active: dev
 logging:
   level:
     root: INFO
-
   #PROBLEM DETAILS
   mvc:
     problemdetails:
       enabled: true
-
-
-#SWAGGER
-tansu:
-  openapi:
-    dev-url: http://localhost:${SERVER_PORT:8080}
-    prod-url: http://tansu-api:8090
-
-
-
 #SERVER WEB
 server:
-  port: ${SERVER_PORT:8080}
-
-
+  port: ${SERVER_PORT}
 #MANAGEMENT ACTUATOR
 management:
-  endpoints:
+  endpoint:
     health:
       show-details: always
+  endpoints:
     web:
       exposure:
         include: '*'
 
-
-
-
+---
+spring:
+  #PROFILES
+  profiles:  dev
+  #DATASOURCE
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dev
+    username: jost
+    password: pass
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+#SERVEUR
+SERVER_PORT: 8080
+#SWAGGER
+tansu:
+  openapi:
+    dev-url: http://localhost:${SERVER_PORT}
+---
+spring:
+  #PROFILES
+  profiles:   test
+  #DATASOURCE
+  datasource:
+    url: jdbc:tc:postgresql:14://dev
+  jpa:
+    show-sql: true
+#SERVEUR
+SERVER_PORT: 8080
+---
+spring:
+  #PROFILES
+  profiles: prod
+  jpa:
+    generate-ddl: true
+#SERVEUR
+SERVER_PORT: 8089
+#SWAGGER
+tansu:
+  openapi:
+    prod-url: http://tansu-api:${SERVER_PORT}

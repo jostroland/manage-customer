@@ -23,7 +23,6 @@ public record UserMapper() {
                 .build();
     }
 
-
     public static User fromRequestToEntity(UserRequest userRequest){
         return User.builder()
                 .id(userRequest.id())
@@ -34,7 +33,6 @@ public record UserMapper() {
                 .build();
     }
 
-
     public static UserDto fromRequestToDto(UserRequest userRequest){
         return UserDto.builder()
                 .id(userRequest.id())
@@ -43,7 +41,4 @@ public record UserMapper() {
                 .roles(userRequest.roles())
                 .build();
     }
-
-
-
 }

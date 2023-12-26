@@ -12,7 +12,6 @@ import io.micrometer.observation.ObservationRegistry;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.tansu.testcustomer.utils.DateUtil.dateTimeFormatter;
+import static com.tansu.testcustomer.utils.DateUtil.DATE_TIME_FORMATTER;
 import static java.util.Collections.singleton;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
@@ -30,11 +29,13 @@ import static org.springframework.http.HttpStatus.OK;
 @Service
 @Slf4j
 @Transactional
+@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
-    @Autowired private  ObservationRegistry registry;
-    @Autowired private  CustomerRepository customerRepository;
-    @Autowired private  ObjectsValidator<CustomerDto> validator;
+    private final ObservationRegistry registry;
+    private final CustomerRepository customerRepository;
+    private final ObjectsValidator<CustomerDto> validator;
+
     @Override
     public HttpResponse<CustomerDto> save(CustomerDto dto) {
         log.info("Saving Customer to the database");
@@ -52,7 +53,7 @@ public class CustomerServiceImpl implements CustomerService {
                                 .message("Customer created successfully")
                                 .status(OK)
                                 .statusCode(OK.value())
-                                .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))
+                                .timeStamp(LocalDateTime.now().format(DATE_TIME_FORMATTER))
                                 ::build
                         );
 
@@ -86,7 +87,7 @@ public class CustomerServiceImpl implements CustomerService {
                                 .message("Customer updated successfully")
                                 .status(OK)
                                 .statusCode(OK.value())
-                                .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))
+                                .timeStamp(LocalDateTime.now().format(DATE_TIME_FORMATTER))
                                 ::build
                 );
 
@@ -114,10 +115,9 @@ public class CustomerServiceImpl implements CustomerService {
                                 .message("Customer founded successfully")
                                 .status(OK)
                                 .statusCode(OK.value())
-                                .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))
+                                .timeStamp(LocalDateTime.now().format(DATE_TIME_FORMATTER))
                                 ::build
                 );
-
     }
 
     @Override
@@ -136,7 +136,7 @@ public class CustomerServiceImpl implements CustomerService {
                                 .message(customerRepository.count() > 0 ? customerRepository.count() + " customers retrieved" : "No customers to display")
                                 .status(OK)
                                 .statusCode(OK.value())
-                                .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))
+                                .timeStamp(LocalDateTime.now().format(DATE_TIME_FORMATTER))
                                 ::build
                 );
     }
@@ -163,7 +163,7 @@ public class CustomerServiceImpl implements CustomerService {
                                 .message(customerRepository.count() > 0 ? "Page (%d/%d) - %d customers retrieved".formatted(customerPage.getNumber(),customerPage.getTotalPages(),customerPage.getTotalElements()) : "No customers to display")
                                 .status(OK)
                                 .statusCode(OK.value())
-                                .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))::build
+                                .timeStamp(LocalDateTime.now().format(DATE_TIME_FORMATTER))::build
                 );
     }
 
@@ -191,11 +191,8 @@ public class CustomerServiceImpl implements CustomerService {
                                 .message("Customer deleted successfully")
                                 .status(OK)
                                 .statusCode(OK.value())
-                                .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))
+                                .timeStamp(LocalDateTime.now().format(DATE_TIME_FORMATTER))
                                 .build()
                 );
-
     }
-
-
 }

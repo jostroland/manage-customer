@@ -2,17 +2,12 @@ package com.tansu.testcustomer.services;
 
 import com.tansu.testcustomer.dto.CustomerDto;
 import com.tansu.testcustomer.dto.HttpResponse;
-import com.tansu.testcustomer.dto.UserDto;
-import com.tansu.testcustomer.dto.UserRequest;
 import com.tansu.testcustomer.entities.Customer;
-import com.tansu.testcustomer.entities.User;
 import com.tansu.testcustomer.exception.EntityNotFoundException;
 import com.tansu.testcustomer.exception.ObjectValidationException;
 import com.tansu.testcustomer.mapper.CustomerMapper;
-import com.tansu.testcustomer.mapper.UserMapper;
 import com.tansu.testcustomer.repository.CustomerRepository;
 import com.tansu.testcustomer.validation.ObjectsValidator;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.Assertions;
@@ -21,20 +16,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.*;
 
@@ -46,6 +39,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc(addFilters = false)
 class CustomerServiceUnitTest {
+
 
 
     @Mock private CustomerRepository customerRepository;
@@ -75,7 +69,11 @@ class CustomerServiceUnitTest {
 
          customersDtos.addAll(List.of(customerDto1,customerDto2,customerDto3,customerDto4,customerDto5));
          customers = customersDtos.stream().map(CustomerMapper::toEntity).toList();
+
+
     }
+
+
     @Test
     @DisplayName("should_create_customer_with_success")
     void should_create_customer_with_success() {

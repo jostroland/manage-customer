@@ -1,25 +1,18 @@
 package com.tansu.testcustomer.controller;
 
 
-
 import com.tansu.testcustomer.controller.api.CustomerApi;
 import com.tansu.testcustomer.dto.CustomerDto;
 import com.tansu.testcustomer.dto.HttpResponse;
 import com.tansu.testcustomer.services.CustomerService;
-import com.tansu.testcustomer.utils.Constants;
-import com.tansu.testcustomer.utils.DateUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,13 +20,11 @@ public class CustomerController implements CustomerApi {
 
     private final CustomerService customerService;
 
-
     @Override
     public ResponseEntity<HttpResponse<CustomerDto>> saveCustomer(CustomerDto customerDto) {
         return ResponseEntity.created(
                 URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/customer/all").toUriString())
         ).body(customerService.save(customerDto));
-
     }
 
     @Override
@@ -60,7 +51,4 @@ public class CustomerController implements CustomerApi {
     public ResponseEntity<HttpResponse<CustomerDto>> deleteCustomer(Integer id) {
         return ResponseEntity.ok().body(customerService.delete(id));
     }
-
-
-
 }

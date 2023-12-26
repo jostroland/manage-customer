@@ -29,18 +29,10 @@ import java.util.Arrays;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-
-
 	@Bean
 	public UserDetailsService userDetailsService() {
-		// public UserDetailsService userDetailsService(PasswordEncoder encoder) {
-		// UserDetails admin = User.withUsername("admin").password(encoder.encode("password")).roles("ADMIN").build();
-		// UserDetails user = User.withUsername("user").password(encoder.encode("pwd")).roles("USER").build();
-		// return new InMemoryUserDetailsManager(admin, user);
 		return new UserServiceImpl();
-
 	}
-
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -65,8 +57,6 @@ public class SecurityConfig {
 								.authenticated()
 				)
 				.httpBasic(Customizer.withDefaults()).build();
-
-
 	}
 
 	@Bean
@@ -74,9 +64,6 @@ public class SecurityConfig {
 	{
 		return new BCryptPasswordEncoder();
 	}
-
-
-
 
 	@Bean
 	public AuthenticationProvider authenticationProvider() {

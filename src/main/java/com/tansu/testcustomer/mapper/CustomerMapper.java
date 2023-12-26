@@ -22,5 +22,4 @@ public record CustomerMapper() {
                 .age(customerDto.age())
                 .build();
     }
-
 }

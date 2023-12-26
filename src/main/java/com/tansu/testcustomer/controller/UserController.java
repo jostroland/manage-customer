@@ -21,7 +21,6 @@ public class UserController implements UserApi {
 
     private final UserServiceImpl userService;
 
-
     @Override
     public ResponseEntity<HttpResponse<UserDto>> saveUser(UserRequest userRequest) {
         return ResponseEntity.created(
@@ -53,7 +52,4 @@ public class UserController implements UserApi {
     public ResponseEntity<HttpResponse<UserDto>> deleteUser(Integer id) {
         return ResponseEntity.ok().body(userService.delete(id));
     }
-
-
-
 }

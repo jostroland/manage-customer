@@ -1,14 +1,9 @@
 package com.tansu.testcustomer.utils;
 
+import lombok.experimental.UtilityClass;
 import java.time.format.DateTimeFormatter;
 
-/**
- * @author Get Arrays (https://www.getarrays.io/)
- * @version 1.0
- * @since 5/24/2021
- */
+@UtilityClass
 public class DateUtil {
-    public static DateTimeFormatter dateTimeFormatter() {
-        return DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss");
-    }
+    public static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss");
 }
