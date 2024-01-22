@@ -7,16 +7,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class UserDetailsService implements UserDetails {
-
-	/**
-	 *
-	 */
 	@Serial
 	private static final long serialVersionUID = 1L;
 
@@ -27,8 +23,9 @@ public class UserDetailsService implements UserDetails {
 	public UserDetailsService(User userInfo) {
 		this.username = userInfo.getEmail();
 		this.password = userInfo.getPassword();
-		this.authorities = Arrays.stream(userInfo.getRoles().split(",")).map(SimpleGrantedAuthority::new)
-				.collect(Collectors.toList());
+		this.authorities = Stream.of(userInfo.getRoles().split(","))
+									.map(SimpleGrantedAuthority::new)
+										.collect(Collectors.toList());
 	}
 
 	@Override
@@ -65,5 +62,4 @@ public class UserDetailsService implements UserDetails {
 	public boolean isEnabled() {
 		return true;
 	}
-
 }

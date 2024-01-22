@@ -15,19 +15,15 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
  * @version 1.0
  * @since 11/12/2023
  */
-
-
-
 @Builder
 @JsonInclude(NON_NULL)
-public record HttpResponse<T> (String timeStamp,
-                               int statusCode,
-                               HttpStatus status,
-                               String message,
-                               String developerMessage,
-                               Collection<? extends T> data,
-                               Map<String, Object> pageCustomers,
-                               Map<String, Object> pageUsers)
-
-       implements Serializable {
-}
+public record HttpResponse<T> (
+                   String timeStamp,
+                   int statusCode,
+                   HttpStatus status,
+                   String message,
+                   String developerMessage,
+                   Collection<? extends T> data,
+                   Map<String, Object> pageCustomers,
+                   Map<String, Object> pageUsers)
+       implements Serializable { }

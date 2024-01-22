@@ -19,32 +19,27 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.Md4PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.session.SessionManagementFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-
-
 	@Bean
 	public UserDetailsService userDetailsService() {
-		// public UserDetailsService userDetailsService(PasswordEncoder encoder) {
-		// UserDetails admin = User.withUsername("admin").password(encoder.encode("password")).roles("ADMIN").build();
-		// UserDetails user = User.withUsername("user").password(encoder.encode("pwd")).roles("USER").build();
-		// return new InMemoryUserDetailsManager(admin, user);
 		return new UserServiceImpl();
-
 	}
-
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+				.addFilterBefore(corsFilter(), SessionManagementFilter.class)
 				.authorizeHttpRequests(auth ->
 								auth.requestMatchers(
 												"/h2-console/**",
@@ -65,8 +60,6 @@ public class SecurityConfig {
 								.authenticated()
 				)
 				.httpBasic(Customizer.withDefaults()).build();
-
-
 	}
 
 	@Bean
@@ -74,9 +67,6 @@ public class SecurityConfig {
 	{
 		return new BCryptPasswordEncoder();
 	}
-
-
-
 
 	@Bean
 	public AuthenticationProvider authenticationProvider() {
@@ -91,7 +81,7 @@ public class SecurityConfig {
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		final CorsConfiguration config = new CorsConfiguration();
 		config.setAllowCredentials(false);
-		config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:4200"));
+		config.setAllowedOrigins(List.of("*"));
 		config.setAllowedHeaders(Arrays.asList("Origin", "Access-Control-Allow-Origin", "Content-Type",
 				"Accept", "Jwt-Token", "Authorization", "Origin, Accept", "X-Requested-With",
 				"Access-Control-Request-Method", "Access-Control-Request-Headers"));

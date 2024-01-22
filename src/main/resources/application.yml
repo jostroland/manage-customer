@@ -1,40 +1,83 @@
 spring:
-#PROFILS
-  profiles:
-    active: ${ACTIVE_PROFILE:prod}
-
+  profiles: #PROFILS
+    active: test
 logging:
   level:
     root: INFO
-
   #PROBLEM DETAILS
   mvc:
     problemdetails:
       enabled: true
-
-
-#SWAGGER
-tansu:
-  openapi:
-    dev-url: http://localhost:${SERVER_PORT:8080}
-    prod-url: http://tansu-api:8090
-
-
-
 #SERVER WEB
 server:
-  port: ${SERVER_PORT:8080}
-
-
+  port: ${SERVER_PORT}
 #MANAGEMENT ACTUATOR
 management:
-  endpoints:
+  endpoint:
     health:
       show-details: always
+  endpoints:
     web:
       exposure:
         include: '*'
-
-
-
-
+#SWAGGER
+tansu:
+  openapi:
+    url: ${URL}
+---
+spring:
+  #PROFILES
+  config:
+    activate:
+      on-profile: dev
+  #DATASOURCE
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dev
+    username: jost
+    password: pass
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+#SERVEUR
+SERVER_PORT: 8081
+#SWAGGER
+URL: "http://localhost:${SERVER_PORT}"
+---
+spring:
+  #PROFILES
+  config:
+    activate:
+      on-profile: test
+  #DATASOURCE
+  datasource:
+    #url: jdbc:tc:postgresql:13.2-alpine://testDB
+    username: sa
+    password:
+    url: jdbc:h2:mem:testdb;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+  jpa:
+    show-sql: false
+#SERVEUR
+SERVER_PORT: 8082
+#SWAGGER
+URL: "http://localhost:${SERVER_PORT}"
+---
+spring:
+  #PROFILES
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    generate-ddl: true
+    show-sql: false
+#SERVEUR
+SERVER_PORT: 8089
+#SWAGGER
+URL: "http://localhost:${SERVER_PORT}"

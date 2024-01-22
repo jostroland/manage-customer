@@ -3,11 +3,11 @@ package com.tansu.testcustomer.handlers;
 
 import com.tansu.testcustomer.exception.EntityNotFoundException;
 import com.tansu.testcustomer.exception.ObjectValidationException;
-import com.tansu.testcustomer.exception.OperationNonPermittedException;
 import jakarta.persistence.NoResultException;
 import jakarta.servlet.ServletException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -37,13 +36,8 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ProblemDetail> onPostNotFoundException(EntityNotFoundException e) {
-        return createHttpErrorResponse(HttpStatus.NOT_FOUND,e);
-    }
-
-    @ExceptionHandler(OperationNonPermittedException.class)
-    public ResponseEntity<ProblemDetail> onOperationNonPermittedException(OperationNonPermittedException e){
-        return createHttpErrorResponse(HttpStatus.NOT_ACCEPTABLE,e);
+    public ResponseEntity<ProblemDetail> onPostNotFoundException(EntityNotFoundException entityNotFoundException) {
+        return createHttpErrorResponse(HttpStatus.NOT_FOUND,entityNotFoundException);
     }
 
     @ExceptionHandler(IllegalStateException.class)
@@ -53,52 +47,35 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(NoResultException.class)
     public ResponseEntity<ProblemDetail> noResultException(NoResultException exception) {
-        return createHttpErrorResponse(INTERNAL_SERVER_ERROR, exception);
+        return createHttpErrorResponse(BAD_REQUEST, exception);
     }
 
-    @ExceptionHandler(ServletException.class)
-    public ResponseEntity<ProblemDetail> servletException(ServletException exception) {
-        return createHttpErrorResponse(INTERNAL_SERVER_ERROR, exception);
-    }
-
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<ProblemDetail> exception(Exception exception) {
-//        return createHttpErrorResponse(INTERNAL_SERVER_ERROR, exception);
-//    }
-
-
-    @ExceptionHandler(ObjectValidationException.class)
-    public ResponseEntity<ProblemDetail> onValidationException1(ObjectValidationException e)  {
+    @ExceptionHandler({ObjectValidationException.class})
+    public ResponseEntity<ProblemDetail> onValidationException1(ObjectValidationException validationException)  {
         var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-
-        problemDetail.setProperty("violationSource",e.getViolationSource());
-        problemDetail.setProperty("violationsErrors",e.getViolations().stream().toString());
-
         problemDetail.setDetail("Object not valid exception has occurred");
+        problemDetail.setProperty("violationSource",validationException.getViolationSource());
+        problemDetail.setProperty("violationsErrors",validationException.getViolations().stream().toString());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(problemDetail);
-    }
-
-
-    
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ProblemDetail> onValidationException(MethodArgumentNotValidException exception)  {
-        var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-
-        List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
-        String fieldsMessage = fieldErrors.stream().map(FieldError::getDefaultMessage).collect(Collectors.joining(", "));
-
-        problemDetail.setProperty("fieldErrors",fieldErrors);
-        problemDetail.setDetail(fieldsMessage);
-        problemDetail.setStatus(HttpStatus.BAD_REQUEST);
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(problemDetail);
     }
 
 
 
-
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public ResponseEntity<ProblemDetail> onValidationException(MethodArgumentNotValidException exception)  {
+//        var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+//
+//        List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
+//        String fieldsMessage = fieldErrors.stream().map(FieldError::getDefaultMessage).collect(Collectors.joining(", "));
+//
+//        problemDetail.setProperty("fieldErrors",fieldErrors);
+//        problemDetail.setDetail(fieldsMessage);
+//        problemDetail.setStatus(HttpStatus.BAD_REQUEST);
+//        return ResponseEntity
+//                .status(HttpStatus.BAD_REQUEST)
+//                .body(problemDetail);
+//    }
 }

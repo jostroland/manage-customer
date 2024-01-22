@@ -1,20 +1,17 @@
 package com.tansu.testcustomer.repository;
 
 import com.tansu.testcustomer.entities.Customer;
+import lombok.val;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.TestComponent;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.IntStream;
 
@@ -26,17 +23,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 class CustomerRepositoryUnitTest {
-
     @Autowired private CustomerRepository customerRepository;
     private final Faker faker = new Faker();
-
 
     @BeforeEach
     public void setUp() {
         IntStream.rangeClosed(1,3)
-                .mapToObj(value -> new Customer(null, faker.name().firstName(), faker.name().lastName(), faker.number().numberBetween(15,60)))
+                .mapToObj(value ->
+                        new Customer(null, faker.name().firstName(), faker.name().lastName(), faker.number().numberBetween(15,60)))
                         .forEach(customerRepository::save);
-
     }
 
     @AfterEach
@@ -47,7 +42,7 @@ class CustomerRepositoryUnitTest {
     @Test
     @DisplayName("should test get all customers")
     public void should_test_get_all_customers() {
-        List<Customer> customerList = customerRepository.findAll();
+        val customerList = customerRepository.findAll();
         assertEquals(customerList.size(),3);
         assertNotNull(customerList.get(0).getFirstName());
     }
@@ -69,8 +64,8 @@ class CustomerRepositoryUnitTest {
     @Test
     @DisplayName("should create customer")
     public void should_create_customer() {
-        Customer saved = Customer.builder().firstName(faker.name().firstName()).firstName(faker.name().lastName()).age(faker.number().numberBetween(15,60)).build();
-        Customer returned = customerRepository.save(saved);
+        val saved = Customer.builder().firstName(faker.name().firstName()).firstName(faker.name().lastName()).age(faker.number().numberBetween(15,60)).build();
+        val returned = customerRepository.save(saved);
 
         assertNotNull(returned);
         assertEquals(returned.getFirstName(),saved.getFirstName());
@@ -81,7 +76,7 @@ class CustomerRepositoryUnitTest {
     @Test
     @DisplayName("should test delete customer")
     public void should_test_delete_customer() {
-        Customer saved = Customer.builder().firstName(faker.name().firstName()).firstName(faker.name().lastName()).age(faker.number().numberBetween(15,60)).build();
+        val saved = Customer.builder().firstName(faker.name().firstName()).firstName(faker.name().lastName()).age(faker.number().numberBetween(15,60)).build();
         customerRepository.save(saved);
         customerRepository.delete(saved);
 

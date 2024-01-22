@@ -25,15 +25,13 @@ import static com.tansu.testcustomer.utils.Constants.*;
 @Tag(name = "Users", description = "Users API")
 public interface UserApi {
 
-
     @PostMapping(value = CREATE_USER_ENDPOINT,consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "This method allows you to create a user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User create"),
             @ApiResponse(responseCode = "404", description = "User does not exist")
     })
-    ResponseEntity<HttpResponse<UserDto>> saveUser(@RequestBody @Valid UserRequest userRequest);
-
+    ResponseEntity<HttpResponse<UserDto>> saveUser(@RequestBody UserRequest userRequest);
 
     @PutMapping(value = UPDATE_USER_ENDPOINT,consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "This method allows you to modify a user")
@@ -41,9 +39,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "200", description = "User has been modified"),
             @ApiResponse(responseCode = "404", description = "User does not exist in the database")
     })
-    ResponseEntity<HttpResponse<UserDto>> updateUser(@PathVariable("id") Integer id,@RequestBody @Valid UserRequest userRequest);
-
-
+    ResponseEntity<HttpResponse<UserDto>> updateUser(@PathVariable("id") Integer id,@RequestBody UserRequest userRequest);
 
     @GetMapping (value =  FIND_BY_ID_USER_ENDPOINT,produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "This method allows you to search for a user by their ID")
@@ -52,8 +48,6 @@ public interface UserApi {
             @ApiResponse(responseCode = "404", description = "No user was found in the database with the ID provided")
     })
     ResponseEntity<HttpResponse<UserDto>> findUserById(@PathVariable("id") Integer id);
-
-    
 
     @GetMapping (value = FIND_ALL_USER_ENDPOINT,produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "This method allows you to select all customers")
@@ -71,7 +65,6 @@ public interface UserApi {
     })
     ResponseEntity<HttpResponse<Map<String, Object>>> findAllUsersByPage(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "size", defaultValue = "3") int size);
 
-
     @DeleteMapping  (value =DELETE_BY_ID_USER_ENDPOINT)
     @Operation(description = "This method allows you to delete a user by its ID")
     @ApiResponses(value = {
@@ -79,9 +72,4 @@ public interface UserApi {
             @ApiResponse(responseCode = "404", description = "No user was found in the database with the ID provided")
     })
     ResponseEntity<HttpResponse<UserDto>> deleteUser(@PathVariable("id") Integer id);
-
-
-
-
-
 }

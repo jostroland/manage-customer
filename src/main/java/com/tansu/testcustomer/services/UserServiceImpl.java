@@ -12,21 +12,23 @@ import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.tansu.testcustomer.utils.DateUtil.dateTimeFormatter;
+import static com.tansu.testcustomer.utils.DateUtil.DATE_TIME_FORMATTER;
 import static java.util.Collections.singleton;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
@@ -39,21 +41,30 @@ import static org.springframework.http.HttpStatus.OK;
 @Transactional
 public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDetailsService {
 
+    private  PasswordEncoder passwordEncoder;
+    private  UserRepository repository;
+    private  ObservationRegistry registry;
+    private  ObjectsValidator<UserDto> validator;
 
-    @Autowired private UserRepository repository;
-    @Qualifier("passwordEncoder")
-    @Autowired private PasswordEncoder encoder;
-    @Autowired private ObservationRegistry registry;
-    @Autowired private ObjectsValidator<UserDto> validator;
+    @Autowired
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository repository, ObservationRegistry registry, ObjectsValidator<UserDto> validator) {
+        this.passwordEncoder = passwordEncoder;
+        this.repository = repository;
+        this.registry = registry;
+        this.validator = validator;
+    }
+
+    public UserServiceImpl() {
+    }
 
     @Override
     public HttpResponse<UserDto> save(UserRequest userRequest) {
         log.info("Saving user to the database");
 
-        User user = User.builder()
+        var user = User.builder()
                 .name(userRequest.name())
                 .email(userRequest.email())
-                .password(encoder.encode(userRequest.password()))
+                .password(passwordEncoder.encode(userRequest.password()))
                 .roles(userRequest.roles()).build();
 
 
@@ -66,32 +77,24 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
                 .observe(
                         HttpResponse.<UserDto>builder()
                                 .data(singleton(
-                                        UserMapper.toDto(userSave)
+                                        userDtoSave
                                 ))
                                 .message("User created successfully")
                                 .status(OK)
                                 .statusCode(OK.value())
-                                .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))
+                                .timeStamp(LocalDateTime.now().format(DATE_TIME_FORMATTER))
                                 ::build
                 );
-
     }
-
-
 
     @Override
     public HttpResponse<UserDto> update(Integer id, UserRequest dto) {
-
         log.info("Updating User to the database");
 
+        validator.validate(UserMapper.fromRequestToDto(dto));
 
         Optional<User> optionalUser = ofNullable(repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("This User was not found on the server")));
-
-        UserDto userDto   = UserMapper.toDto(optionalUser.get());
-        User user         = UserMapper.toEntity(userDto);
-
-        validator.validate(userDto);
 
         User updateUser = optionalUser .orElseThrow(() -> new EntityNotFoundException("This User was not found on the server"));
         updateUser.setName(dto.name());
@@ -109,24 +112,21 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
                                 .message("User updated successfully")
                                 .status(OK)
                                 .statusCode(OK.value())
-                                .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))
+                                .timeStamp(LocalDateTime.now().format(DATE_TIME_FORMATTER))
                                 ::build
                 );
-
     }
 
     @Override
     public HttpResponse<UserDto> findById(Integer id) throws EntityNotFoundException {
-        log.info("Updating user to the database");
+        log.info("FindById user from the database by id {}", id);
         if(isNull(id)){
             log.error("The ID must not be null");
             return null;
         }
 
-        log.info("FindById user from the database by id {}", id);
         Optional<User> optionalUser = ofNullable(repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("This user was not found on the server")));
-
 
         return Observation.createNotStarted("find-by-id-user",registry)
                 .observe(
@@ -137,7 +137,7 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
                                 .message("User founded successfully")
                                 .status(OK)
                                 .statusCode(OK.value())
-                                .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))
+                                .timeStamp(LocalDateTime.now().format(DATE_TIME_FORMATTER))
                                 ::build
                 );
     }
@@ -150,7 +150,6 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
                 .map(UserMapper::toDto)
                 .toList();
 
-
         return Observation.createNotStarted("find-all-users",registry)
                 .observe(
                         HttpResponse.<List<UserDto>>builder()
@@ -158,7 +157,7 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
                                 .message(repository.count() > 0 ? repository.count() + " users retrieved" : "No users to display")
                                 .status(OK)
                                 .statusCode(OK.value())
-                                .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))
+                                .timeStamp(LocalDateTime.now().format(DATE_TIME_FORMATTER))
                                 ::build
                 );
     }
@@ -186,7 +185,7 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
                                 .message("Users found successfully")
                                 .status(OK)
                                 .statusCode(OK.value())
-                                .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))::build
+                                .timeStamp(LocalDateTime.now().format(DATE_TIME_FORMATTER))::build
                 );
     }
 
@@ -213,7 +212,7 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
                                 .message("User deleted successfully")
                                 .status(OK)
                                 .statusCode(OK.value())
-                                .timeStamp(LocalDateTime.now().format(dateTimeFormatter()))
+                                .timeStamp(LocalDateTime.now().format(DATE_TIME_FORMATTER))
                                 .build()
                 );
     }
@@ -224,8 +223,5 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
 
         return user.map(com.tansu.testcustomer.services.UserDetailsService::new)
                 .orElseThrow(() -> new EntityNotFoundException("Given user not found : " + username));
-
     }
-
-
 }

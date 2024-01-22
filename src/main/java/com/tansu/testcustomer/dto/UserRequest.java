@@ -1,6 +1,5 @@
 package com.tansu.testcustomer.dto;
 
-
 import com.tansu.testcustomer.validation.StrongRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -24,5 +23,4 @@ public record UserRequest(
                           @NotEmpty(message = "The roles name must not be empty")
                           @StrongRole(message = "The role must start with the term: ROLE_")
                           String roles)
-{
-}
+{ }
