@@ -1,6 +1,6 @@
 spring:
   profiles: #PROFILS
-    active: test
+    active: prod
 logging:
   level:
     root: INFO
