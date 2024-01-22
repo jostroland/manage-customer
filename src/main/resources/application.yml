@@ -1,7 +1,6 @@
 spring:
-
   profiles: #PROFILS
-    active: dev
+    active: test
 logging:
   level:
     root: INFO
@@ -21,11 +20,16 @@ management:
     web:
       exposure:
         include: '*'
-
+#SWAGGER
+tansu:
+  openapi:
+    url: ${URL}
 ---
 spring:
   #PROFILES
-  profiles:  dev
+  config:
+    activate:
+      on-profile: dev
   #DATASOURCE
   datasource:
     url: jdbc:postgresql://localhost:5432/dev
@@ -42,31 +46,38 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 #SERVEUR
-SERVER_PORT: 8080
+SERVER_PORT: 8081
 #SWAGGER
-tansu:
-  openapi:
-    dev-url: http://localhost:${SERVER_PORT}
+URL: "http://localhost:${SERVER_PORT}"
 ---
 spring:
   #PROFILES
-  profiles:   test
+  config:
+    activate:
+      on-profile: test
   #DATASOURCE
   datasource:
-    url: jdbc:tc:postgresql:14://dev
+    #url: jdbc:tc:postgresql:13.2-alpine://testDB
+    username: sa
+    password:
+    url: jdbc:h2:mem:testdb;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
   jpa:
-    show-sql: true
+    show-sql: false
 #SERVEUR
-SERVER_PORT: 8080
+SERVER_PORT: 8082
+#SWAGGER
+URL: "http://localhost:${SERVER_PORT}"
 ---
 spring:
   #PROFILES
-  profiles: prod
+  config:
+    activate:
+      on-profile: prod
   jpa:
     generate-ddl: true
+    show-sql: false
 #SERVEUR
 SERVER_PORT: 8089
 #SWAGGER
-tansu:
-  openapi:
-    prod-url: http://tansu-api:${SERVER_PORT}
+URL: "http://localhost:${SERVER_PORT}"

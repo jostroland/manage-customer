@@ -12,6 +12,7 @@ import io.micrometer.observation.ObservationRegistry;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,12 +30,18 @@ import static org.springframework.http.HttpStatus.OK;
 @Service
 @Slf4j
 @Transactional
-@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
-    private final ObservationRegistry registry;
-    private final CustomerRepository customerRepository;
-    private final ObjectsValidator<CustomerDto> validator;
+    private ObservationRegistry registry;
+    private CustomerRepository customerRepository;
+    private ObjectsValidator<CustomerDto> validator;
+
+    @Autowired
+    public CustomerServiceImpl(ObservationRegistry registry, CustomerRepository customerRepository, ObjectsValidator<CustomerDto> validator) {
+        this.registry = registry;
+        this.customerRepository = customerRepository;
+        this.validator = validator;
+    }
 
     @Override
     public HttpResponse<CustomerDto> save(CustomerDto dto) {
@@ -59,22 +66,20 @@ public class CustomerServiceImpl implements CustomerService {
 
     }
 
-
     @Override
     public HttpResponse<CustomerDto> update(Integer id, CustomerDto customerDto) {
-        log.info("Updating Customer to the database");
+        log.info("Updating Customer with id {} to the database",id);
         validator.validate(customerDto);
 
-        Optional<Customer> optionalCustomer = ofNullable(customerRepository.findById(id)
+        var optionalCustomer = ofNullable(customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("This Customer was not found on the server")));
 
-        Customer customer         = CustomerMapper.toEntity(customerDto);
+        var customer         = CustomerMapper.toEntity(customerDto);
 
-        Customer updateCustomer = optionalCustomer.orElseGet(Customer::new);
+        var updateCustomer = optionalCustomer.orElseGet(Customer::new);
         updateCustomer.setFirstName(customer.getFirstName());
         updateCustomer.setLastName(customer.getLastName());
         updateCustomer.setAge(customer.getAge());
-
 
         customerRepository.save(updateCustomer);
 
@@ -90,21 +95,18 @@ public class CustomerServiceImpl implements CustomerService {
                                 .timeStamp(LocalDateTime.now().format(DATE_TIME_FORMATTER))
                                 ::build
                 );
-
     }
 
     @Override
     public HttpResponse<CustomerDto> findById(Integer id) {
-        log.info("Updating Customer to the database");
+        log.info("FindById Customer from the database by id {}", id);
         if(isNull(id)){
             log.error("The ID must not be null");
             return null;
         }
 
-        log.info("FindById Customer from the database by id {}", id);
         Optional<Customer> optionalCustomer = ofNullable(customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("This Customer was not found on the server")));
-
 
         return Observation.createNotStarted("find-by-id-Customer",registry)
                 .observe(
@@ -123,11 +125,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public HttpResponse<List<CustomerDto>> findAll() {
         log.info("Find all customers to the database");
-
         List<CustomerDto> customerDtos = customerRepository.findAll().stream()
                 .map(CustomerMapper::toDto)
                 .toList();
-
 
         return Observation.createNotStarted("find-all-Customer",registry)
                 .observe(
@@ -144,8 +144,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public HttpResponse<Map<String, Object>>  findAll(int page, int size) {
         log.info("Find all by page customers to the database");
-
-        Pageable pageable = PageRequest.of(page, size);
+        var pageable = PageRequest.of(page, size);
         var customerPage = customerRepository.findAll(pageable);
 
         Map<String, Object> response = new HashMap<>();
@@ -170,14 +169,12 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public HttpResponse<CustomerDto> delete(Integer id) throws  EntityNotFoundException{
         log.info("Deleting Customer from the database by id {}", id);
-
         if(isNull(id)){
             log.error("The ID must not be null");
             return null;
         }
 
-        log.info("Deleting note from the database by id {}", id);
-        Optional<Customer> optionalCustomer = ofNullable(customerRepository.findById(id)
+        var optionalCustomer = ofNullable(customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("This customer was not found on the server")));
 
         optionalCustomer.ifPresent(customerRepository::delete);

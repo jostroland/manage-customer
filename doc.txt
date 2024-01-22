@@ -58,3 +58,13 @@ server:
 
 #spring.security.user.name=saurav
 #spring.security.user.password=admin
+
+
+
+
+  datasource:
+    url: jdbc:tc:postgresql:13.2-alpine://payment
+    username: sa
+    password:
+    url: jdbc:h2:mem:testdb;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver

@@ -1,181 +1,129 @@
 package com.tansu.testcustomer.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.tansu.testcustomer.dto.UserRequest;
-import com.tansu.testcustomer.entities.Customer;
-import com.tansu.testcustomer.entities.User;
+import com.tansu.testcustomer.dto.CustomerDto;
 import com.tansu.testcustomer.mapper.CustomerMapper;
-import com.tansu.testcustomer.repository.CustomerRepository;
-import com.tansu.testcustomer.repository.UserRepository;
-import com.tansu.testcustomer.services.CustomerServiceImpl;
-import com.tansu.testcustomer.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONException;
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import lombok.val;
+import net.datafaker.Faker;
+import org.hamcrest.CoreMatchers;
+import org.junit.jupiter.api.*;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
+import static com.tansu.testcustomer.utils.Constants.TEST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @Slf4j
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-
+@ActiveProfiles(TEST)
+@AutoConfigureMockMvc
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CustomerApiIntegrationTest {
-
-    public static final String LOCALHOST = "http://localhost:";
-
-    @LocalServerPort
-    private int port;
-
-    @Autowired private  TestRestTemplate restTemplate;
-    @Autowired private  PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private CustomerServiceImpl customerService;
-
-    private static HttpHeaders headers;
-    private JsonObject jsonObject;
-    private ObjectMapper objectMapper = new ObjectMapper();
-
-    @BeforeAll
-    public static void init() {
-        headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-    }
-
+    private final static Faker faker = new Faker();
+    private final CustomerDto customerDto = CustomerDto.builder().firstName(faker.name().firstName()).lastName(faker.name().firstName()).age(faker.number().numberBetween(15,60)).build();
+    private static MockMvc mockMvc;
 
     @BeforeEach
-    public void setup(){
-
-    }
-
-
-
-
-
-
-
-
-    @Test
-    public void when_logged_user_requestsThenSuccess()
-            throws IllegalStateException {
-
-        UserRequest userRequest = UserRequest.builder().name("user").email("user@gmail.com").password(passwordEncoder.encode("password")).roles("ROLE_USER").build();
-        ResponseEntity<String> response = restTemplate.postForEntity(LOCALHOST.concat(String.valueOf(port)).concat("/save"), userRequest, String.class);
-
-
-        log.info("response : %s".formatted(response));
-        log.info("response.getStatusCode() : %s".formatted(response.getStatusCode()));
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+    void setUpMockMvc(WebApplicationContext wac) {
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+                .alwaysExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .apply(springSecurity())
+                .build();
     }
 
     @Test
+    @Order(1)
+    @DisplayName("test create customer")
+    @WithMockUser("user@gmail.com")
+    public void test_create_customer() throws Exception {
+        val result = mockMvc
+                .perform(post("/api/v1/customer/save")
+                        .content(Objects.requireNonNull(new ObjectMapper().writeValueAsString(customerDto)))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
+    }
+
+    @Test
+    @Order(2)
     @DisplayName("test all customers")
-    @Sql(statements = "INSERT INTO customers (id, firstname, lastname, age) VALUES (1,'jost', 'roland', 17)", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(statements = "DELETE FROM customers WHERE id='1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void test_customers_list() throws JSONException {
-        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-        ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort()+"/all", HttpMethod.GET, entity, new ParameterizedTypeReference<>(){});
-
-
-        jsonObject = JsonParser.parseString(Objects.requireNonNull(response.getBody()))
-                .getAsJsonObject();
-
-        assertEquals(response.getStatusCodeValue(), 200);
-        assertTrue(!jsonObject.get("message").getAsString().equals("No customers to display"));
+    @WithMockUser("user@gmail.com")
+    public void test_customers_list() throws Exception {
+         val result = mockMvc.perform(get("/api/v1/customer/all"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.*").exists())
+                .andReturn();
+         log.info("result.getResponse().getContentAsString() {}",result.getResponse().getContentAsString());
+         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
     }
 
+    @Test
+    @Order(3)
+    @DisplayName("test customers by page")
+    @WithMockUser("user@gmail.com")
+    public void test_customers_by_page() throws Exception {
+        val response = mockMvc.perform(get("/api/v1/customer/all/page")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("page","1")
+                .param("size", "2"));
+
+        response.andExpect(MockMvcResultMatchers.status().isOk());
+    }
 
     @Test
+    @Order(4)
     @DisplayName("test find by id customers")
-    @Sql(statements = "INSERT INTO customers (id, firstname, lastname, age) VALUES (1,'jost', 'roland', 17)", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(statements = "DELETE FROM customers WHERE id='1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void test_find_by_id_customer() throws JSONException {
-        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-        ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort()+"/findById/1", HttpMethod.GET, entity, new ParameterizedTypeReference<>(){});
+    @WithMockUser("user@gmail.com")
+    public void test_find_by_id_customer() throws Exception {
+        val result = mockMvc.perform(get("/api/v1/customer/findById/1"))
+                .andExpect(status().isOk())
+                .andReturn();
 
-        jsonObject = JsonParser.parseString(Objects.requireNonNull(response.getBody()))
-                .getAsJsonObject();
-
-        assertEquals(response.getStatusCodeValue(), 200);
-        assertTrue(jsonObject.get("message").getAsString().equals("Customer founded successfully"));
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
     }
 
     @Test
-    @Sql(statements = "INSERT INTO customers (id, firstname, lastname, age) VALUES (3, 'jost', 'roland', 17)", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    public void test_delete_by_id_customer()  {
-        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-        ResponseEntity<String> response = restTemplate.exchange(
-                (createURLWithPort() + "/delete/3"), HttpMethod.DELETE, entity, String.class);
+    @Order(5)
+    @DisplayName("test update by id customer")
+    @WithMockUser("user@gmail.com")
+    public void test_update_by_id_customer() throws Exception {
+        var customer = CustomerMapper.toEntity(customerDto);
+        customer.setFirstName("Jost");
 
-        jsonObject =
-                JsonParser
-                .parseString(Objects.requireNonNull(response.getBody()))
-                .getAsJsonObject();
+        val response = mockMvc.perform(put("/api/v1/customer/update/1")
+                .content(Objects.requireNonNull(new ObjectMapper().writeValueAsString(CustomerMapper.toDto(customer))))
+                .contentType(MediaType.APPLICATION_JSON));
 
-        assertEquals(response.getStatusCodeValue(), 200);
-        assertTrue(jsonObject.get("message").getAsString().equals("Customer deleted successfully"));
+        response.andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].firstName", CoreMatchers.is(customer.getFirstName())));
     }
 
     @Test
-    @Sql(statements = "DELETE FROM customers", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void test_create_customer() throws JsonProcessingException {
-        Customer customer = new Customer(1, "jost", "roland", 17);
-        final String stringCustomer = objectMapper.writeValueAsString(customer);
-        HttpEntity<String> entity = new HttpEntity<>(stringCustomer, headers);
-        ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort()+"/save", HttpMethod.POST, entity, String.class);
+    @Order(6)
+    @DisplayName("test delete by id customer")
+    @WithMockUser("user@gmail.com")
+    public void test_delete_by_id_customer() throws Exception {
+        val response = mockMvc.perform(delete("/api/v1/customer/delete/1"));
 
-        jsonObject =
-                JsonParser
-                        .parseString(Objects.requireNonNull(response.getBody()))
-                        .getAsJsonObject();
-
-        /*final Object[] array = jsonObject.getAsJsonArray("data").asList().toArray();
-        final Object lastCustomer =  Arrays.stream(array).findFirst().get();
-        log.info("stringCustomer :"+ stringCustomer);
-        assertEquals(stringCustomer, lastCustomer);*/
-
-        assertEquals(jsonObject.get("message").getAsString(), "Customer created successfully");
-
+        response.andExpect(MockMvcResultMatchers.status().isOk());
     }
-
-
-
-    private String createURLWithPort() {
-        return LOCALHOST.concat(String.valueOf(port)).concat( "/api/v1/customer");
-    }
-    private void initURL() {
-        restTemplate = new TestRestTemplate("user@gmail.com", passwordEncoder.encode("password"));
-    }
-
 }

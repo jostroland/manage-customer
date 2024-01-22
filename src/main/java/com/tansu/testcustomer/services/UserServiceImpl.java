@@ -119,13 +119,12 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
 
     @Override
     public HttpResponse<UserDto> findById(Integer id) throws EntityNotFoundException {
-        log.info("Updating user to the database");
+        log.info("FindById user from the database by id {}", id);
         if(isNull(id)){
             log.error("The ID must not be null");
             return null;
         }
 
-        log.info("FindById user from the database by id {}", id);
         Optional<User> optionalUser = ofNullable(repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("This user was not found on the server")));
 
