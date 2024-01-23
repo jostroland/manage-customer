@@ -18,7 +18,7 @@
         <swagger.version>2.0.3</swagger.version>
         <javax.validation.version>2.0.1.Final</javax.validation.version>
         <datafaker.version>2.0.2</datafaker.version>
-        <micrometer.version>1.0.0</micrometer.version>
+        <observation.version>1.0.2</observation.version>
     </properties>
     <dependencies>
         <dependency>
@@ -75,15 +75,6 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-tracing-bridge-brave</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.ttddyy.observation</groupId>
-            <artifactId>datasource-micrometer-spring-boot</artifactId>
-            <version>${micrometer.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -107,17 +98,20 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.ttddyy.observation</groupId>
+            <artifactId>datasource-micrometer-spring-boot</artifactId>
+            <version>${observation.version}</version>
+        </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -130,9 +124,9 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                     <image>
-                         <name>customer-manage-image</name>
-                     </image>
+                    <image>
+                        <name>customer-manage-image</name>
+                    </image>
                 </configuration>
             </plugin>
         </plugins>

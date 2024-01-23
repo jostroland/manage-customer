@@ -7,6 +7,7 @@ import com.tansu.testcustomer.dto.HttpResponse;
 import com.tansu.testcustomer.services.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -28,6 +29,7 @@ public class CustomerController implements CustomerApi {
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     public ResponseEntity<HttpResponse<CustomerDto>> updateCustomer(Integer id, CustomerDto customerDto) {
         return ResponseEntity.ok().body(customerService.update(id,customerDto));
     }
