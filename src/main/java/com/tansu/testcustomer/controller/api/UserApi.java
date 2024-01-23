@@ -1,7 +1,6 @@
 package com.tansu.testcustomer.controller.api;
 
 
-import com.tansu.testcustomer.dto.CustomerDto;
 import com.tansu.testcustomer.dto.HttpResponse;
 import com.tansu.testcustomer.dto.UserDto;
 import com.tansu.testcustomer.dto.UserRequest;
@@ -9,11 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

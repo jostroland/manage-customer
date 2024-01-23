@@ -28,5 +28,4 @@ public class ObjectsValidator<T> {
       throw new ObjectValidationException(errorMessages, objectToValidate.getClass().getName());
     }
   }
-
 }

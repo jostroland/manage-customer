@@ -21,11 +21,9 @@ import java.util.stream.Collectors;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
-@RestControllerAdvice
 @Slf4j
+@RestControllerAdvice
 public class RestExceptionHandler {
-
-
 
     private ResponseEntity<ProblemDetail> createHttpErrorResponse(HttpStatus httpStatus, Exception exception) {
         log.error(exception.getMessage());
@@ -61,21 +59,4 @@ public class RestExceptionHandler {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(problemDetail);
     }
-
-
-
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public ResponseEntity<ProblemDetail> onValidationException(MethodArgumentNotValidException exception)  {
-//        var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-//
-//        List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
-//        String fieldsMessage = fieldErrors.stream().map(FieldError::getDefaultMessage).collect(Collectors.joining(", "));
-//
-//        problemDetail.setProperty("fieldErrors",fieldErrors);
-//        problemDetail.setDetail(fieldsMessage);
-//        problemDetail.setStatus(HttpStatus.BAD_REQUEST);
-//        return ResponseEntity
-//                .status(HttpStatus.BAD_REQUEST)
-//                .body(problemDetail);
-//    }
 }

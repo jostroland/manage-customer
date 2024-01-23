@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
@@ -34,10 +35,9 @@ import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
 import static org.springframework.http.HttpStatus.OK;
 
-
-
-@Service
 @Slf4j
+@NoArgsConstructor
+@Service
 @Transactional
 public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDetailsService {
 
@@ -54,24 +54,19 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
         this.validator = validator;
     }
 
-    public UserServiceImpl() {
-    }
-
     @Override
     public HttpResponse<UserDto> save(UserRequest userRequest) {
         log.info("Saving user to the database");
-
         var user = User.builder()
                 .name(userRequest.name())
                 .email(userRequest.email())
                 .password(passwordEncoder.encode(userRequest.password()))
                 .roles(userRequest.roles()).build();
 
-
         validator.validate(UserMapper.toDto(user));
 
-        User userSave = repository.save(user);
-        UserDto userDtoSave = UserMapper.toDto(userSave);
+        var userSave = repository.save(user);
+        var userDtoSave = UserMapper.toDto(userSave);
 
         return Observation.createNotStarted("save-user", registry)
                 .observe(
@@ -90,13 +85,12 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
     @Override
     public HttpResponse<UserDto> update(Integer id, UserRequest dto) {
         log.info("Updating User to the database");
-
         validator.validate(UserMapper.fromRequestToDto(dto));
 
-        Optional<User> optionalUser = ofNullable(repository.findById(id)
+        val optionalUser = ofNullable(repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("This User was not found on the server")));
 
-        User updateUser = optionalUser .orElseThrow(() -> new EntityNotFoundException("This User was not found on the server"));
+        var updateUser = optionalUser .orElseThrow(() -> new EntityNotFoundException("This User was not found on the server"));
         updateUser.setName(dto.name());
         updateUser.setEmail(dto.email());
         updateUser.setPassword(dto.password());
@@ -125,7 +119,7 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
             return null;
         }
 
-        Optional<User> optionalUser = ofNullable(repository.findById(id)
+        val optionalUser = ofNullable(repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("This user was not found on the server")));
 
         return Observation.createNotStarted("find-by-id-user",registry)
@@ -145,8 +139,7 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
     @Override
     public HttpResponse<List<UserDto>> findAll() {
         log.info("Find all users to the database");
-
-        List<UserDto> userDtos = repository.findAll().stream()
+        val userDtos = repository.findAll().stream()
                 .map(UserMapper::toDto)
                 .toList();
 
@@ -164,13 +157,11 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
 
     @Override
     public HttpResponse<Map<String, Object>> findAll(int page, int size) {
-
         log.info("Find all by page users to the database");
-
         Pageable pageable = PageRequest.of(page, size);
         var userPage = repository.findAll(pageable);
 
-        Map<String, Object> response = new HashMap<>();
+        var response = new HashMap<String, Object>();
         var content = userPage.getContent().stream().map(UserMapper::toDto).collect(Collectors.toList());
 
         response.put("userDto", content);
@@ -197,8 +188,7 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
             return null;
         }
 
-        log.info("Deleting note from the database by id {}", id);
-        Optional<User> optionalUser = ofNullable(repository.findById(id)
+        val optionalUser = ofNullable(repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("This User was not found on the server")));
 
         optionalUser.ifPresent(repository::delete);
@@ -219,9 +209,10 @@ public class UserServiceImpl implements UserService<UserDto,UserRequest>, UserDe
 
     @Override
     public UserDetails loadUserByUsername(String username) throws EntityNotFoundException {
-        Optional<User> user = repository.findByEmail(username);
+        val user = repository.findByEmail(username);
 
         return user.map(com.tansu.testcustomer.services.UserDetailsService::new)
                 .orElseThrow(() -> new EntityNotFoundException("Given user not found : " + username));
     }
 }
+

@@ -12,6 +12,7 @@ import io.micrometer.observation.ObservationRegistry;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +28,8 @@ import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
 import static org.springframework.http.HttpStatus.OK;
 
-@Service
 @Slf4j
+@Service
 @Transactional
 public class CustomerServiceImpl implements CustomerService {
 
@@ -63,7 +64,6 @@ public class CustomerServiceImpl implements CustomerService {
                                 .timeStamp(LocalDateTime.now().format(DATE_TIME_FORMATTER))
                                 ::build
                         );
-
     }
 
     @Override
@@ -105,7 +105,7 @@ public class CustomerServiceImpl implements CustomerService {
             return null;
         }
 
-        Optional<Customer> optionalCustomer = ofNullable(customerRepository.findById(id)
+        val optionalCustomer = ofNullable(customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("This Customer was not found on the server")));
 
         return Observation.createNotStarted("find-by-id-Customer",registry)
@@ -125,7 +125,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public HttpResponse<List<CustomerDto>> findAll() {
         log.info("Find all customers to the database");
-        List<CustomerDto> customerDtos = customerRepository.findAll().stream()
+        val customerDtos = customerRepository.findAll().stream()
                 .map(CustomerMapper::toDto)
                 .toList();
 
@@ -147,7 +147,7 @@ public class CustomerServiceImpl implements CustomerService {
         var pageable = PageRequest.of(page, size);
         var customerPage = customerRepository.findAll(pageable);
 
-        Map<String, Object> response = new HashMap<>();
+        var response = new HashMap<String, Object>();
         var content = customerPage.getContent().stream().map(CustomerMapper::toDto).collect(Collectors.toList());
 
         response.put("CustomerDto", content);
@@ -174,7 +174,7 @@ public class CustomerServiceImpl implements CustomerService {
             return null;
         }
 
-        var optionalCustomer = ofNullable(customerRepository.findById(id)
+        val optionalCustomer = ofNullable(customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("This customer was not found on the server")));
 
         optionalCustomer.ifPresent(customerRepository::delete);

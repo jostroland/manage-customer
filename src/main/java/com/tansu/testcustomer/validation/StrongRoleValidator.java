@@ -13,7 +13,4 @@ public class StrongRoleValidator implements ConstraintValidator<StrongRole, Stri
     public boolean isValid(String value, ConstraintValidatorContext context) {
         return value.startsWith("ROLE_");
     }
-
-
-
 }

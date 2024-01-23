@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,11 +36,10 @@ public class OpenApiConfig {
 
     @Bean
     public OpenAPI customnOpenApiConfig() {
-
             var server = new Server();
             server.setUrl(url);
             server.setDescription("Server URL in "
-                            .concat((Objects.equals(System.getenv("spring.profiles.active"), DEV) ? "Development":"Production"))
+                            .concat((Objects.equals(environment.getProperty("spring.profiles.active"), DEV) ? "Development":"Production"))
                             .concat(" environment")
             );
 

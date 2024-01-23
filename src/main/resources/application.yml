@@ -1,6 +1,6 @@
 spring:
   profiles: #PROFILS
-    active: prod
+    active: dev
 logging:
   level:
     root: INFO
@@ -40,11 +40,11 @@ spring:
       ddl-auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
+        format_sql: false
 #SERVEUR
 SERVER_PORT: 8081
 #SWAGGER

@@ -7,20 +7,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 import static com.tansu.testcustomer.utils.Constants.*;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 
 @Tag(name = "Customers", description = "Customers API")

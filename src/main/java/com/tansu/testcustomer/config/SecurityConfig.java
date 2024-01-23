@@ -2,21 +2,17 @@ package com.tansu.testcustomer.config;
 
 
 import com.tansu.testcustomer.services.UserServiceImpl;
-import com.tansu.testcustomer.utils.Constants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.Md4PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.session.SessionManagementFilter;
@@ -38,13 +34,12 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-		return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+		return httpSecurity.csrf(CsrfConfigurer::disable)
 				.addFilterBefore(corsFilter(), SessionManagementFilter.class)
 				.authorizeHttpRequests(auth ->
 								auth.requestMatchers(
 												"/h2-console/**",
 												// resources for swagger to work properly
-												"/v2/api-docs",
 												"/v3/api-docs",
 												"/v3/api-docs/**",
 												"/swagger-resources",
@@ -91,5 +86,4 @@ public class SecurityConfig {
 		source.registerCorsConfiguration("/**", config);
 		return new CorsFilter(source);
 	}
-
 }
