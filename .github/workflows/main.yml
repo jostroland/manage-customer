@@ -33,7 +33,7 @@ jobs:
           context: .
           dockerfile: Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/manage-customer:today
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/manage-customers
 
       - name: Login to Docker Hub
         uses: docker/login-action@v1
@@ -47,4 +47,4 @@ jobs:
           context: .
           dockerfile: Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/manage-customers-new:today
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/manage-customers-new
